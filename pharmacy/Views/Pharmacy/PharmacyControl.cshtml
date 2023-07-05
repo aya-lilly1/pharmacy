@@ -1,0 +1,110 @@
+﻿
+<div class="d-flex ">
+    <div class="col-2 py-2" style="background-color: white">
+        <div class="h-100 py-3 text-center">
+            <img src="~/images/profileaccountphoto.png" class="rounded-circle img-fluid shadow" style="width: 100px; height: 100px;" />
+            <div class="navbar-collapse my-3 collapse d-block">
+                <ul class="navbar-nav flex-grow-1">
+                    <li id="accountInfo" class="nav-item py-3 menuProfile praimaryClass">
+                        <p>Account Information</p>
+                    </li>
+                    <li id="currentOrder" class="nav-item py-3 menuProfile praimaryClass">
+                        <p>Current Orders</p>
+                    </li>
+                    <li id="archivedOrder" class="nav-item py-3 menuProfile praimaryClass">
+                        <p>Archived Orders</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-10 pt-2  d-block" style="padding-left:30px">
+        <div class="col-12 pageName" id="pageName">
+            <h2>
+                <img src="~/images/3671775_home_icon.png" height="20" width="20" />
+                <span style="font-size:16px;color:#B1B1B1">/ Pharmacy Profile / </span>
+                <span id="currantPagee" ></span>
+            </h2>
+        </div>
+        <div class="col-12 mt-3 pt-2 pb-5" id="partialViewContainer">
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        var currentSection = '';
+
+        $('#accountInfo').click(function () {
+            $('.nav-item').removeClass('menuProfileActiv');
+            $(this).addClass('menuProfileActiv');
+            currentSection = 'section1';
+            displaySection();
+            $('#currantPagee').text($('#accountInfo').find('p').text());
+            $('#currantPagee').addClass('activeNamePage');
+        });
+
+        $('#currentOrder').click(function () {
+            $('.nav-item').removeClass('menuProfileActiv');
+            $(this).addClass('menuProfileActiv');
+            currentSection = 'section2';
+            displaySection();
+            $('#currantPagee').text($('#currentOrder').find('p').text());
+            $('#currantPagee').addClass('activeNamePage');
+        });
+
+        $('#archivedOrder').click(function () {
+            $('.nav-item').removeClass('menuProfileActiv');
+            $(this).addClass('menuProfileActiv');
+            currentSection = 'section3';
+            displaySection();
+            $('#currantPagee').text($('#archivedOrder').find('p').text());
+            $('#currantPagee').addClass('activeNamePage');
+        });
+
+        function displaySection() {
+            $('.section').hide();
+            $('#' + currentSection).show();
+           
+
+        }
+
+        loadPartialView();
+
+        function loadPartialView() {
+            $.ajax({
+                url: '@Url.Action("PartialViewOfPharmacyControl", "Pharmacy")',
+                type: 'GET',
+                data: { section: currentSection },
+                success: function (result) {
+                    $('#partialViewContainer').html(result);
+                }
+            });
+        }
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

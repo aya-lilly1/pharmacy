@@ -1,0 +1,573 @@
+﻿
+
+
+
+
+    <div class="py-4">
+    <img src="~/images/3671775_home_icon.png" width="15" height="15" style="margin-bottom:5px" />  <span style="color: #b1b1b1; font-size:16px  ">/</span> <a style="color: #0093DD; text-decoration:none; font-size:14px ;font-weight: 800;" href="#">New Order</a>
+    </div>
+
+    <div style="background-color:white; padding:10px 60px 0px !important" class="shadow-sm p-2 mb-2   container">
+
+        <div class="row">
+            <div class="col-8 d-flex  ">
+                <img src="~/images/pharmacy.png" width="17" height="17" style="margin-right:10px" />
+                <p style=" font-size:12px ;font-weight: bold;margin-right:10px"> Pharmacy Name</p>
+                <p style=" font-size:12px ;font-weight: normal;color: #b1b1b1; margin-right:40px"> {Pharmacy Name}</p>
+                <img src="~/images/location.png" width="15" height="15" style="margin-right:10px" />
+                <p style=" font-size:12px ;font-weight: bold; margin-right:10px"> Location</p>
+                <p style=" font-size:12px ;font-weight: normal;color: #b1b1b1; margin-right:10px"> {Pharmacy Name}</p>
+            </div>
+            <div class="col-4 d-flex justify-content-end">
+
+                <a style="font-size:12px;color: #0093DD; text-decoration:none; font-weight: bold;"> My Orders >></a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <p style=" font-size:15px ;font-weight: bold;">  Create your order now  </p>
+    </div>
+
+
+    <div class="container p-3" style="border:1px solid #EAEAEA">
+
+        <div class="row">
+        <h3 class="col-6" style=" font-size:14px ;font-weight: bold; color:#707070">Drug Name</h3>
+        <h3 class="col-6" style=" font-size:14px ;font-weight: bold; color:#707070">Quantity</h3>
+            <div class="col-12 ">
+            <form asp-action="AddOrderTemp" method="post" class="submitForm">
+            <select id="durgsSelect" required style="font-size:12px;color:#707070;border:1px solid #EAEAEA !important" class="statesSelect durgsSelect col-6" name="states">
+                <option value="Select "  selected disabled>select or enter drug name</option>
+            </select>
+
+
+                <input id="numDurg" type="number" required class="statesSelect col-1 numDurgsWrong" value="0"
+                       style="border-radius:5px; border:1px solid #EAEAEA!important; background-color:white" />
+
+            <button type="submit" id="addDurg" class="col-1  " style="border:none; height:27px; background-color:#0093DD;font-size:14px ;font-weight: bold; color:white;width:70px; border-radius:5px"> + ADD </button>
+
+            </form>
+            
+            </div>
+
+
+        <div class="table">
+            <table class="table table-hover " style="border:1px solid #EAEAEA; margin-top:10px;border:none!important">
+                <thead class="text-center" style="background-color:#D4EDF9!important;font-size:12px;border:none!important ">
+                    <tr style="border:none!important">
+                       
+                        <th scope="col" >Drug ID</th>
+                        <th scope="col">Drug Name</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Drug Status</th>
+                        <th scope="col">Expiry Date</th>
+                        <th scope="col">Price Per Unit (NIS)</th>
+                        <th scope="col">Total Price (NIS)</th>
+                        <th scope="col" style="color:#D4EDF9">"__"</th>
+
+                      
+                    </tr>
+                </thead>
+                <tbody class="bodyOftable">
+
+                </tbody>
+                
+            </table>
+        </div>
+      </div>
+
+    
+
+    </div>
+<button id="saveOrders" class=" my-2 py-2 px-4 " style="background-color:#168305; border:none;color:white ; border-radius:5px;font-size:14px">Save</button>
+
+
+
+@section Scripts
+ {
+    <script>
+        $(document).ready(function () 
+        {
+
+
+
+
+                    LoadDurgs();
+
+                    function LoadDurgs() {
+                        $('.durgsSelect').select2({
+                            ajax: {
+                                url: '/Pharmacy/GetAllDurgs',
+                                type: 'GET',
+                                dataType: 'json',
+                                delay: 250,
+                                data: function (params) {
+                                    return {
+                                        term: params.term,
+                                        page: params.page || 1
+                                    };
+                                },
+                                processResults: function (data) {
+                                    //var results = [];
+
+                                    //$.each(data.items, function (index, item) {
+                                    //    results.push({
+                                    //        id: item.id,
+                                    //        text: item.name,
+                                    //        'data-quantity': item.quantity,
+                                    //        'data-price': item.price
+                                    //    });
+                                    //});
+                                    var results = data.items.map(function (item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.name,
+                                            'data-quantity': item.quantity,
+                                            'data-price': item.price
+                                        };
+                                    });
+
+                                    return {
+                                        results: results,
+                                        pagination: {
+                                            more: data.morePages
+                                        }
+                                    };
+                                },
+                                cache: true
+                            },
+                        });
+                    }
+
+                    //let SelectedDrug ;
+                    //$('#durgsSelect').on("select2:select",(e)=>{
+                    //    SelectedDrug = e.params.data;
+                    //})
+
+
+
+                                  
+
+                                 $(".update").on("click", function () 
+                                 {
+                                    debugger;
+                                    var row = $(this).closest("tr");
+                                    var tdDurgID = $(row.find("td")[0]);
+                                    var tdDurgName = $(row.find("td")[1]);
+                                    var tdDurgQuntity = $(row.find("td")[2]);
+                                    var tdAvailable = $(row.find("td")[3]);
+                                    var tdDate = $(row.find("td")[4]);
+                                    var tdDurgunit = $(row.find("td")[5]);
+                                    var tdTotalprice = $(row.find("td")[6]);
+                                    var tdAction = $(row.find("td")[7]);
+
+                                    var selectElement = $("<select id='updatedurgselect' required style='font-size: 12px;text-align:left!important; color:#707070; border: 1px solid #EAEAEA!important' class='statesSelect durgsSelect text-left col-12' name='states'><option value='Select' selected disabled>select or enter drug name</option></select>");
+                                    tdDurgName.empty().append(selectElement);
+                                    LoadDurgs();
+
+
+
+                                    var numDurgs = $("  <input id='UpdatenumDurg' type='number' required class='statesSelect col-8' style='border-radius: 5px; border: 1px solid #EAEAEA!important; background-color:white' /> ")
+
+                                    tdDurgQuntity.empty().append(numDurgs);
+
+
+
+                                    var btnSave = $("<button id='updatSave' class=' my-2 py-2 px-4 ' style='background-color:#168305; border: none; color: white; border-radius: 5px; font-size: 14px'>Save</button> ");
+
+                                    tdAction.empty().append(btnSave);
+
+
+                                    $("#UpdatenumDurg").on("change", function () {
+                                        var quantity = $(this).val();
+                                        var unitPrice = parseFloat(tdDurgunit.text());
+                                        var totalPrice = quantity * unitPrice;
+                                        tdTotalprice.text(totalPrice);
+                                    });
+
+                                    $('#updatedurgselect').on("select2:select", (e) => {
+
+
+                                        SelectedDrug = e.params.data;
+                                        tdDurgID.empty().text(SelectedDrug.id);
+                                        var price = SelectedDrug['data-price'];
+                                        tdDurgunit.empty().text(price);
+                                        var quantity = $("#UpdatenumDurg").val();
+                                        var Totalprice = Math.round(SelectedDrug['data-price'] * quantity / 10) * 10;
+                                        tdTotalprice.empty().text(Totalprice);
+
+                                    });
+
+                                    $("#updatSave").on("click", function () {
+                                        const currentDate = new Date();
+                                        const options = { day: 'numeric', month: 'short', year: 'numeric' };
+                                        const formattedDateNow = currentDate.toLocaleDateString('en-US', options);
+                                        var selectedDrug = $("#updatedurgselect option:selected").text();
+                                        var selectedOption = $("#updatedurgselect").select2('data')[0];
+                                        var orderQuantity = $("#UpdatenumDurg").val();
+                                        var quantity = selectedOption['data-quantity'];
+                                        var id = selectedOption.id;
+                                        var priceUnit = selectedOption['data-price'];
+                                        var totalPrice = priceUnit * orderQuantity;
+
+                                        if (orderQuantity > quantity) {
+                                            $("#UpdatenumDurg").addClass("numDurgsWrong");
+                                            Swal.fire({
+                                                icon: "error",
+                                                title: "Error",
+                                                text: "The required quantity is not available. You can order less."
+                                            });
+                                        } else {
+                                            var btn = "<td><img class='controlOrder update' src='/images/group 531.png' width='25' height='25' style='display: none;'><img class='controlOrder delete' src='/images/group 530.png' width='25' height='25' style='display: none;'></td>";
+                                            tdAction.empty().append(btn);
+                                            tdDurgName.empty().text(selectedDrug);
+                                            tdDurgQuntity.empty().text(quantity);
+                                            tdTotalprice.text(totalPrice);
+                                            tdDurgunit.empty().text(priceUnit);
+                                            tdDurgID.empty().text(id);
+                                            tdAvailable.empty().html("<td><img src='/images/available_check.png' width='25' height='25' /> Available</td>");
+                                            tdDate.empty().text(formattedDateNow);
+
+                                            var savedData = localStorage.getItem('savedData');
+                                            if (savedData) {
+                                                var parsedData = JSON.parse(savedData);
+                                                var rowIndex = $(".table-hover tr").index(row);
+                                                parsedData[rowIndex] = {
+                                                    id: id,
+                                                    text: selectedDrug,
+                                                    quantity: orderQuantity,
+                                                    price: priceUnit,
+                                                    totalprice: totalPrice
+                                                };
+
+                                                localStorage.setItem('savedData', JSON.stringify(parsedData));
+                                            }
+
+                                            $("#updatedurgselect").val(null).trigger("change");
+                                        }
+                                        
+                                    });
+
+                                 });
+                             
+
+                        
+
+
+
+                            
+
+                                  $(".delete").on("click", function () {
+                                        Swal.fire({
+                                            icon: "warning",
+                                            title: "Warning",
+                                            text: "Are you sure you want to remove this row?",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Yes, remove it",
+                                            cancelButtonText: "Cancel",
+                                            reverseButtons: true
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                var row = $(this).closest("tr");
+                                                row.remove();
+                                                var savedData = localStorage.getItem('savedData');
+                                                if (savedData) {
+                                                    var parsedData = JSON.parse(savedData);
+                                                    var rowIndex = $(".table-hover tr").index(row);
+                                                    parsedData.splice(rowIndex, 1);
+                                                    localStorage.setItem('savedData', JSON.stringify(parsedData));
+                                                }
+                                                Swal.fire({
+                                                    icon: "success",
+                                                   title: "Success",
+                                                    text: "Row removed successfully"
+                                                });
+                                            }
+                                        });
+                                  });
+                             
+                      
+
+                            //$(document).on("click", "#saveOrders", function () {
+                            //    //debugger;
+
+                            //    var rowDataArray = [];
+                            //    $(".table-hover tr").each(function () {
+                            //        var rowData = {};
+                            //        var tdElements = $(this).find("td");
+                            //        rowData.id = tdElements.eq(0).text();
+                            //        rowData.text = tdElements.eq(1).text();
+                            //        rowData.quantity = tdElements.eq(2).text();
+                            //        rowData.date = tdElements.eq(4).text();
+                            //        rowData.price = tdElements.eq(5).text();
+                            //        rowData.totalprice = tdElements.eq(6).text();
+
+                            //        rowDataArray.push(rowData);
+
+                            //    });
+                            //    console.log(rowDataArray);
+                            //});
+
+             
+
+        
+
+
+                    //controller
+            function ShowData() {
+              debugger;
+                $.ajax({
+                    type: 'Get',
+                    url: '/OrderTemp/GetAllOrderTEMP',
+                    dataType: 'json',
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function (result, status, xhr) {
+                        debugger;
+                        var newTr = '';
+                        $.each(result, function (index, item) {
+                            newTr += "<tr class='p-0 text-center trhover' style='color:#707070;font-size:12px'>";
+                            newTr += "<td hidden>" + item.id + "</td>";
+                            newTr += "<td>" + item.durgId + "</td>";
+                            newTr += "<td>" + item.durgName + "</td>";
+                            newTr += "<td>" + item.quantity + "</td>";
+                            newTr += "<td><img src='" + '@Url.Content("~/images/available_check.png")' + "' width='15' height='15'/>  Available</td>";
+                            newTr += "<td>" + item.orderAt + "</td>";
+                            newTr += "<td>" + item.price + "</td>";
+                            newTr += "<td>" + item.totalPrice + "</td>";
+                            newTr += "<td><img class='controlOrder update' src='" + '@Url.Content("~/images/group 531.png")' + "' width='18' height='18'/><img   class='controlOrder delete' src='" + '@Url.Content("~/images/group 530.png")' + "' width='18' height='18'/> </td>";
+                            newTr += "</tr>";
+                        });
+
+                        $(".bodyOftable").html(newTr);
+                        hovertr();
+                        hoverbutton();
+                       UpdateRow();
+                      
+                     
+                    },
+                    error: function () {
+                        alert("Something Error");
+                    }
+                });
+            }
+
+            ShowData();
+          
+
+
+            function hovertr(){
+                $(".trhover").hover(
+                    function () {
+                        $(this).find(".controlOrder").show();
+                    },
+                    function () {
+                        $(this).find(".controlOrder").hide();
+                    }
+                );
+            }
+            function hoverbutton() {
+                $(".controlOrder").hover(
+                    function () {
+                        $(this).attr({ width: "25", height: "25" });
+                    },
+                    function () {
+                        $(this).attr({ width: "18", height: "18" });
+                    }
+                );
+            }
+            function UpdateRow()
+            {
+                $(".update").on("click", function () {
+
+                    var row = $(this).closest("tr");
+                    var tdIDorder = $(row.find("td")[0]);
+                    var tdDurgID = $(row.find("td")[1]);
+                    var tdDurgName = $(row.find("td")[2]);
+                    var tdDurgQuntity = $(row.find("td")[3]);
+                    var tdAvailable = $(row.find("td")[4]);
+                    var tdDate = $(row.find("td")[5]);
+                    var tdDurgunit = $(row.find("td")[6]);
+                    var tdTotalprice = $(row.find("td")[7]);
+                    var tdAction = $(row.find("td")[8]);
+                    var selectElement = $("<form  asp-action='UpdateOrderTemp' method='post' class='UpdateForm'><select  required style='font-size: 10px;text-align:left!important;hieght:40px; color:#707070; border: 1px solid #EAEAEA!important' class='statesSelect durgsSelect text-left col-12 updatedurgselect'  name='states'><option value='Select' selected disabled>select or enter drug name</option></select>");
+                    tdDurgName.empty().append(selectElement);
+                    LoadDurgs();
+                    var numDurgs = $("  <input id='UpdatenumDurg' type='number' required class='statesSelect col-8 px-3 py-1' value='0' style='border-radius: 5px; border: 1px solid #EAEAEA!important; background-color:white' /> ")
+
+                    tdDurgQuntity.empty().append(numDurgs);
+
+
+
+                    var btnSave = $("<button id='updatSave' type='submit' class=' my-1 py-1 px-4 ' style='background-color:#168305; border: none; color: white; border-radius: 5px; font-size: 11px'>Save</button> </form>");
+
+                    tdAction.empty().append(btnSave);
+
+                    $("#UpdatenumDurg").on("change", function () {
+                        var quantity = $(this).val();
+                        var unitPrice = parseFloat(tdDurgunit.text());
+                        var totalPrice = quantity * unitPrice;
+                        tdTotalprice.text(totalPrice);
+                    });
+                    $('.updatedurgselect').on("select2:select", (e) => {
+
+
+                        SelectedDrug = e.params.data;
+                        tdDurgID.empty().text(SelectedDrug.id);
+                        var price = SelectedDrug['data-price'];
+                        tdDurgunit.empty().text(price);
+                        var quantity = $("#UpdatenumDurg").val();
+                        var Totalprice = Math.round(SelectedDrug['data-price'] * quantity / 10) * 10;
+                        tdTotalprice.empty().text(Totalprice);
+
+                    });
+                    UpdateForm();
+
+                   
+                });
+
+               
+            
+                   
+            }
+            
+            function UpdateForm(){
+                $(".UpdateForm").on("submit", (e) => {
+                    debugger;
+                    var myForm = $(e.currentTarget)
+                    e.preventDefault();
+                    var selectedOptionUpdate = $(".updatedurgselect").select2("data")[0];
+                    var drugQuantity = selectedOptionUpdate["data-quantity"];
+                    var userQuantity = $("#UpdatenumDurg").val();
+                    var drugId = selectedOptionUpdate["id"];
+                    var drugName = selectedOptionUpdate["text"];
+                    var unitPrice = selectedOptionUpdate["data-price"];
+                    var totalPrice = unitPrice * userQuantity;
+
+
+                    var objData = {
+                        Id: tdIDorder,
+                        DurgId: drugId,
+                        DurgName: drugName,
+                        Quantity: userQuantity,
+                        Price: unitPrice,
+                        TotalPrice: totalPrice
+                    };
+                    if (userQuantity > drugQuantity || userQuantity == 0) {
+                        $("#numDurg").addClass("numDurgsWrong");
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "The required quantity is not available. Please order a different quantity."
+                        });
+                    } else {
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '/OrderTemp/UpdateOrderTemp',
+                            dataType: 'json',
+                            data: objData,
+                            success: function (response) {
+                                ShowData();
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Success",
+                                    text: "Order added successfully"
+                                });
+
+
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "Error occurred while adding the order"
+                                });
+                            }
+
+
+
+                        });
+
+                    }
+                });
+            }
+
+        
+
+
+
+            $(".submitForm").on("submit", (e) => {
+                debugger;
+                var myForm = $(e.currentTarget)
+                e.preventDefault();
+                var selectedOption = $(".durgsSelect").select2("data")[0];
+
+                var drugQuantity = selectedOption["data-quantity"];
+                var userQuantity = $("#numDurg").val();
+                var drugId = selectedOption["id"];
+                var drugName = selectedOption["text"];
+                var unitPrice = selectedOption["data-price"];
+                var totalPrice = unitPrice * userQuantity;
+
+                var objData = {
+                    DurgId: drugId,
+                    DurgName: drugName,
+                    Quantity: userQuantity,
+                    Price: unitPrice,
+                    TotalPrice: totalPrice
+                };
+                if (userQuantity > drugQuantity || userQuantity == 0) {
+                    $("#numDurg").addClass("numDurgsWrong");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "The required quantity is not available. Please order a different quantity."
+                    });
+                } else {
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/OrderTemp/AddOrderTemp',
+                        dataType: 'json',
+                        data: objData,
+                        success: function (response) {
+                            ShowData();
+                            Swal.fire({
+                                icon: "success",
+                                title: "Success",
+                                text: "Order added successfully"
+                            });
+
+
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: "Error occurred while adding the order"
+                            });
+                        }
+                        
+
+
+                    });
+                    
+                 }
+            });
+
+       
+       });
+    
+    </script>
+ }
+
+
+
+
+
+
+
+
+
