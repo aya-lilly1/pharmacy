@@ -15,6 +15,8 @@ namespace pharmacy_core.Mapper
         {
             CreateMap<Durg, DurgsMV>().ReverseMap();
             CreateMap<TempOrder, TempOrderMV>().ReverseMap();
+            CreateMap<Order, OrderMV>().ReverseMap();
+
         }
     }
 }

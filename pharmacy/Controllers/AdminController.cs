@@ -40,11 +40,11 @@ namespace pharmacy.Controllers
 
 
         [HttpPost]
-        public IActionResult ImportExcelFileDurgs(IFormFile excelFile)
+        public IActionResult ImportExcelFileDrugs(IFormFile excelFile)
         {
             if (excelFile != null && excelFile.Length > 0)
             {
-                _admin.AddDurgsExcel(excelFile);
+               _admin. AddDrugsExcel(excelFile);
                 return Json("Excel file processed successfully.");
             }
 

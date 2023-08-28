@@ -12,6 +12,8 @@ namespace pharmacy_core.Manager.Order
         TempOrderMV  OrderDurgTEMP(string userId, TempOrderMV orderMV);
         List<TempOrderMV> GetAllOrderTEMP(string userId);
         TempOrderMV UpdateOrderDurgTEMP(TempOrderMV orderMV);
+        void DeleteOrderTemp(int id);
+        void SaveOrder(string userId);
 
     }
 }

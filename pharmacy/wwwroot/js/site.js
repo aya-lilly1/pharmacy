@@ -52,7 +52,7 @@
         console.log("done1");
         $.ajax({
 
-            url: '/admin/ImportExcelFileDurgs',
+            url: '/admin/ImportExcelFileDrugs',
             type: 'POST',
             data: formData,
             processData: false,

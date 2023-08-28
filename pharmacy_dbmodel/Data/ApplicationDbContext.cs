@@ -14,5 +14,7 @@ namespace pharmacy_DbModel.Data
 
         public DbSet<Durg> Durgs { get; set; }
         public DbSet<TempOrder> TempOrders { get; set; }
+        public DbSet<Order> Orders { get; set; }
+
     }
 }

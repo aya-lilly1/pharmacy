@@ -19,32 +19,15 @@ namespace pharmacy.Controllers
         [HttpPost]
         public JsonResult AddOrderTemp(TempOrderMV orderMV)
         {
-            var Order = new TempOrderMV
-            {
-                DurgId = orderMV.DurgId,
-                DurgName = orderMV.DurgName,
-                Price = orderMV.Price,
-                TotalPrice = orderMV.TotalPrice,
-                Quantity = orderMV.Quantity,
-                OrderAt = DateTime.Now
-            };
-
-            var res = _order.OrderDurgTEMP(_UserId , Order);
+       
+            var res = _order.OrderDurgTEMP(_UserId , orderMV);
             return new JsonResult("done");
         }
         [HttpPost]
-        public JsonResult UpdateOrderTemp(TempOrderMV orderMV)
+        public JsonResult UpdateOrderTemp([FromBody] TempOrderMV orderMV)
         {
-            var order = new TempOrderMV
-            {
-                Id = orderMV.Id,
-                DurgId = orderMV.DurgId,
-                DurgName = orderMV.DurgName,
-                Price = orderMV.Price,
-                TotalPrice = orderMV.TotalPrice,
-                Quantity = orderMV.Quantity
-            };
-            var res = _order.UpdateOrderDurgTEMP(order);
+      
+            var res = _order.UpdateOrderDurgTEMP(orderMV);
             return new JsonResult("done");
         }
         [HttpGet]
@@ -53,6 +36,19 @@ namespace pharmacy.Controllers
            //var userId= User.Identity.GetUserId();
             var res = _order.GetAllOrderTEMP(_UserId);
             return new JsonResult(res);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteOrderTemp(int id)
+        {
+            _order.DeleteOrderTemp(id);
+            return new JsonResult("done");
+        }
+        [HttpPost]
+        public JsonResult SaveOrder()
+        {
+            _order.SaveOrder(_UserId);
+            return new JsonResult("done");
         }
 
     }

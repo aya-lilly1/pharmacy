@@ -11,7 +11,7 @@ namespace pharmacy_core.Manager.Admin
     public interface IAdmin
     {
         Task AddPharmacyExcel(IFormFile excelFile);
-        void AddDurgsExcel(IFormFile excelFile);
+        void AddDrugsExcel(IFormFile excelFile);
      
     }
 }

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace pharmacy_core.Manager.Admin
 {
-    public class Admin :IAdmin
+    public class Admin : IAdmin
     {
 
         private UserManager<ApplicationUser> _userManager;
@@ -23,7 +23,7 @@ namespace pharmacy_core.Manager.Admin
         private ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public Admin(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext dbContext,IMapper mapper)
+        public Admin(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext dbContext, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -37,7 +37,7 @@ namespace pharmacy_core.Manager.Admin
             using (var stream = new MemoryStream())
             {
                 excelFile.CopyTo(stream);
-                stream.Position = 0; 
+                stream.Position = 0;
 
                 ExcelPackage.LicenseContext = LicenseContext.Commercial;
                 using (var package = new ExcelPackage(stream))
@@ -62,7 +62,7 @@ namespace pharmacy_core.Manager.Admin
                             Fullname = worksheet.Cells[row, 2].Value?.ToString(),
                             TypeUser = "Pharmacy"
                         };
-                       var password = worksheet.Cells[row, 1].Value?.ToString();
+                        var password = worksheet.Cells[row, 1].Value?.ToString();
 
 
                         // Create the user with UserManager
@@ -81,7 +81,7 @@ namespace pharmacy_core.Manager.Admin
             }
         }
 
-        public void AddDurgsExcel(IFormFile excelFile)
+        public void AddDrugsExcel(IFormFile excelFile)
         {
             using (var stream = new MemoryStream())
             {
@@ -100,10 +100,9 @@ namespace pharmacy_core.Manager.Admin
                         {
                             Id = Convert.ToInt32(worksheet.Cells[row, 1].Value),
                             Name = worksheet.Cells[row, 2].Value?.ToString(),
-                            Unit = worksheet.Cells[row, 3].Value?.ToString(), 
+                            Unit = worksheet.Cells[row, 3].Value?.ToString(),
                             Quantity = Convert.ToInt32(worksheet.Cells[row, 4].Value),
                             Price = Convert.ToDecimal(worksheet.Cells[row, 5].Value)
-
                         };
 
                         _dbContext.Durgs.Add(data);
@@ -112,10 +111,10 @@ namespace pharmacy_core.Manager.Admin
                     _dbContext.SaveChanges();
                 }
             }
+
+
+
+
         }
-
-
-
-
     }
 }

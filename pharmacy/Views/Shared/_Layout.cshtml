@@ -73,8 +73,8 @@
                                     @fullName
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"  method="post">
-                                        <button type="submit" class="nav-link btn btn-link text-dark"> Logout</button>
+                                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post">
+                                        <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
                                     </form>
                                 </div>
                             </li>
@@ -92,27 +92,21 @@
                                     Admin
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" onclick="showUploadFormDurgs()">Import Excel new Drugs</a>
+                                    <a id="duExcel" class="dropdown-item">Import Excel new Drugs</a>
                                     <div class="dropdown-divider"></div>
-                                    <a id="pharm" class="dropdown-item" @*onclick="showUploadForm()"*@>Import Excel new pharmacies</a>
+                                    <a id="pharm" class="dropdown-item">Import Excel new pharmacies</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="#">Something else here</a>
                                 </div>
                             </li>
-                        }
+                        } 
 
                     </ul>
-
-
-                   
-                    
-                   
 
                 </div>
             </div>
         </nav>
     </header>
-
 
     <!-- Modal Pharmacy -->
     <div class="modal fade" id="uploadFormModal" tabindex="-1" role="dialog" aria-labelledby="uploadFormModalLabel" aria-hidden="true">
@@ -134,33 +128,34 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button id="Upharm" type="button" class="btn btn-primary" @*onclick="uploadExcelFile('/admin/ImportExcelFilePharmacies')"*@>Upload</button>
+                    <button id="uploadPharm" type="button" class="btn btn-primary">Upload</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal Drugs -->
-    <div class="modal fade" id="uploadDurgsFormModal" tabindex="-1" role="dialog" aria-labelledby="uploadDurgsFormModalLabel" aria-hidden="true">
+    <div class="modal fade" id="uploadDrugsFormModal" tabindex="-1" role="dialog" aria-labelledby="uploadDrugsFormModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="uploadDurgsFormModalLabel">Upload Drugs Data</h5>
+                    <h5 class="modal-title" id="uploadDrugsFormModalLabel">Upload Drugs Data</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="durgsExcelUploadForm">
+                    <form id="durgsExcelUploadForm" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="durgsExcelFile">Select Excel File:</label>
-                            <input type="file" class="form-control-file" id="durgsExcelFile" name="durgsExcelFile" accept=".xlsx, .xls">
+                            <input type="file" class="form-control-file" id="durgsExcelFile" name="excelFile" accept=".xlsx, .xls">
                         </div>
                     </form>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="uploadExcelFile('/admin/ImportExcelFileDurgs')">Upload</button>
+                    <button id="uploadDrugs" type="button" class="btn btn-primary">Upload</button>
                 </div>
             </div>
         </div>
@@ -177,15 +172,15 @@
     <script>
         $(document).ready(function () {
             $("#pharm").on("click", function () {
-                console.log("done");
+                console.log("Opening pharmacy upload modal");
                 $('#uploadFormModal').modal('show');
             });
 
-            $("#Upharm").on("click", function () {
-
+            $("#uploadPharm").on("click", function () {
                 var form = document.getElementById("excelUploadForm");
                 var formData = new FormData(form);
-                console.log("done1");
+
+                console.log("Uploading pharmacy data...");
                 $.ajax({
                     url: '/admin/ImportExcelFilePharmacies',
                     type: 'POST',
@@ -207,9 +202,49 @@
                         });
                     }
                 });
-                console.log("done2");
+
+                console.log("Closing pharmacy upload modal");
                 $('#uploadFormModal').modal('hide');
             });
+
+            $("#duExcel").on("click", function () {
+                console.log("Opening drugs upload modal");
+                $('#uploadDrugsFormModal').modal('show');
+            });
+
+            $("#uploadDrugs").on("click", function () {
+                var form = document.getElementById("durgsExcelUploadForm");
+                var formData = new FormData(form);
+
+                console.log("Uploading drugs data...");
+                $.ajax({
+                    url: '/admin/ImportExcelFileDrugs',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: result
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error
+                        });
+                    }
+                });
+
+                console.log("Closing drugs upload modal");
+                $('#uploadDrugsFormModal').modal('hide');
+            });
+
+
+
         });
     </script>
 
@@ -217,282 +252,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-
-
-
-
-
-
-
-@*
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - pharmacy</title>
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <link href="~/lib/select2/css/select2.min.css" rel="stylesheet" />
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-   
-@*    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-*@    @*<script src="~/lib/select2/js/select2.min.js"></script>
-    <script src="https://use.fontawesome.com/db47ebeea5.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script*@>
-   
-   @* <script src="~/js/site.js"></script>*@
-    
-
-    @*<script src="~/js/site.js" asp-append-version="true"></script>*@
-   
-
-  @*  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/pharmacy.styles.css" asp-append-version="true" />
-    <style>
-        body {
-            font-family: Roboto;
-        }
-    </style>
-</head>*@
-@*<body class="p-0 m-0">
-    <script>
-        $(document).ready(function () {
-            $(".statesSelect").select2();
-
-            $('#button1').click(function () {
-                $.ajax({
-                    url: '@Url.Action("LoadPartialView1", "Home")',
-                    type: 'GET',
-                    success: function (result) {
-                        $('#partialViewContainer').html(result);
-                    }
-                });
-            });
-
-            $('#button2').click(function () {
-                $.ajax({
-                    url: '@Url.Action("LoadPartialView2", "Home")',
-                    type: 'GET',
-                    success: function (result) {
-                        $('#partialViewContainer').html(result);
-                    }
-                });
-            });
-
-            $('#button3').click(function () {
-                $.ajax({
-                    url: '@Url.Action("LoadPartialView3", "Home")',
-                    type: 'GET',
-                    success: function (result) {
-                        $('#partialViewContainer').html(result);
-                    }
-                });
-            });
-
-
-            function showUploadForm() {
-                console.log("done");
-                $('#uploadFormModal').modal('show');
-            }
-            function uploadExcelFile() {
-                var form = document.getElementById("excelUploadForm");
-                var formData = new FormData(form);
-                console.log("done1");
-                $.ajax({
-
-                    url: '/admin/ImportExcelFilePharmacies',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (result) {
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: result.message
-                        });
-                    },
-                    error: function (xhr, status, error) {
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: xhr.responseJSON.error
-                        });
-                    }
-
-                });
-                console.log("done2");
-                $('#uploadFormModal').modal('hide');
-            }
-
-        });
-    </script>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img style="margin-left:100px;" src="~/images/logo.png" width="40" height="40" />
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Pharmacy" asp-action="Home">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Administration</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Vision</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link " href="#" role="button">
-                                <img style="padding-bottom:5px" src="~/images/mask-group-2.png" width="30" height="30" />
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                               aria-haspopup="true" aria-expanded="false">
-                                Admin
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" onclick="showUploadFormDurgs()">Import Excel new Drugs</a>
-                                <div class="dropdown-divider"></div>
-                                <a  id="pharm"class="dropdown-item"  onclick="showUploadForm()">Import Excel new pharmacies</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </li>
-                    </ul>
-
-                </div>
-            </div>
-        </nav>
-    </header>
-
-
-    <!-- Modal Pharmacy -->
-    <div class="modal fade" id="uploadFormModal" tabindex="-1" role="dialog" aria-labelledby="uploadFormModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="uploadFormModalLabel">Upload Pharmacy Data</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="excelUploadForm">
-                        <div class="form-group">
-                            <label for="excelFile">Select Excel File:</label>
-                            <input type="file" class="form-control-file" id="excelFile" name="excelFile" accept=".xlsx, .xls">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="uploadExcelFile('/admin/ImportExcelFilePharmacies')">Upload</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Drugs -->
-    <div class="modal fade" id="uploadDurgsFormModal" tabindex="-1" role="dialog" aria-labelledby="uploadDurgsFormModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="uploadDurgsFormModalLabel">Upload Drugs Data</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="durgsExcelUploadForm">
-                        <div class="form-group">
-                            <label for="durgsExcelFile">Select Excel File:</label>
-                            <input type="file" class="form-control-file" id="durgsExcelFile" name="durgsExcelFile" accept=".xlsx, .xls">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="uploadExcelFile('/admin/ImportExcelFileDurgs')">Upload</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-light" >
-        <div class="container">
-            <main role="main"  >
-                @RenderBody()
-            </main>
-        </div>
-    </div>*@
-
-
-
-   @* @section Scripts
-    {
-        <script>
-            $(document).ready(function () {
-
-                $("#pharm").on("click", function () {
-                
-                    console.log("done");
-                    $('#uploadFormModal').modal('show');
-
-
-                }
-
-                function uploadExcelFile() {
-                    var form = document.getElementById("excelUploadForm");
-                    var formData = new FormData(form);
-                    console.log("done1");
-                    $.ajax({
-
-                        url: '/admin/ImportExcelFilePharmacies',
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function (result) {
-
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: result.message
-                            });
-                        },
-                        error: function (xhr, status, error) {
-
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: xhr.responseJSON.error
-                            });
-                        }
-
-                    });
-                    console.log("done2");
-                    $('#uploadFormModal').modal('hide');
-                }
-            }
-        </script>
-    }*@
-    <!-- Your custom scripts -->
-  @*  @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>*@
